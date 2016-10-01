@@ -12,17 +12,17 @@ import java.util.Random;
 
 public class Fruit {
 
-    static final double gravity = 0.01;
+    private static final double gravity = 0.01;
 
-    Vector velocity;
-    Random random = new Random();
-    Game fruitninja;
-    EntityArmorStand armorStand;
-    Material fruit;
+    private Vector velocity;
+    private final Random random = new Random();
+    private final Game fruitninja;
+    private final EntityArmorStand armorStand;
+    private Material fruit;
 
     public Fruit(Game fruitninja) {
-        int randomint = random.nextInt(3);
-        switch (randomint) {
+        int randomInt = random.nextInt(3);
+        switch (randomInt) {
             case 0:
                 fruit = Material.TNT;
                 break;
@@ -45,7 +45,7 @@ public class Fruit {
         armorStand.getWorld().addEntity(armorStand);
     }
 
-    public Location locationAndVelocity() {
+    private Location locationAndVelocity() {
         double beginPoint = randomDouble(-1.5, 1.5);
         double endPoint = randomDouble(-1.5, 1.5);
         double velocityY = randomDouble(0.20, 0.27);
@@ -56,7 +56,7 @@ public class Fruit {
         return ItemToArmor(new Location(gameLocation.getWorld(), fruitninja.gameLocation.getX() + beginPoint, fruitninja.gameLocation.getY(), fruitninja.gameLocation.getZ() + Game.distance));
     }
 
-    public double randomDouble(double rangeMin, double rangeMax) {
+    private double randomDouble(double rangeMin, double rangeMax) {
         return rangeMin + (rangeMax - rangeMin) * random.nextDouble();
     }
 
@@ -83,11 +83,11 @@ public class Fruit {
     }
 
 
-    public void despawn() {
+    private void despawn() {
         armorStand.die();
     }
 
-    public Location getFruitLocation() {
+    private Location getFruitLocation() {
         return new Location(fruitninja.gameLocation.getWorld(), armorStand.locX - 0.2, armorStand.locY + 1.4, armorStand.locZ - 0.4);
     }
 
@@ -98,7 +98,7 @@ public class Fruit {
         return l;
     }
 
-    public static Location ItemToArmor(Location l) {
+    private static Location ItemToArmor(Location l) {
         l.setX(l.getX() + 0.4);
         l.setY(l.getY() - 1.4);
         l.setZ(l.getZ() + 0.4);

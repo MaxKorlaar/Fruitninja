@@ -27,25 +27,26 @@ public class Game implements Listener {
     static final double distance = 3.4;
 
 
-    int tickTask;
+    private int tickTask;
 
-    Location gameLocation;
+    final Location gameLocation;
 
-    Player player;
+    private final Player player;
 
 
-    char rainbowTick = 0;
+    private char rainbowTick = 0;
 
     enum RainBowColor {
-        RED, BLUE, GREEN;
+        RED, BLUE, GREEN
     }
 
-    RainBowColor currentcolor = RainBowColor.RED;
+    RainBowColor currentColor = RainBowColor.RED;
 
-    public int score = 0;
+
+    private int score = 0;
 
     boolean clicking = false;
-    int clickingdelay = 0;
+    private int clickingDelay = 0;
 
     public Game(Player player, Location location) {
         this.player = player;
@@ -58,7 +59,7 @@ public class Game implements Listener {
         player.setLevel(score);
     }
 
-    public int lives = 5;
+    private int lives = 5;
 
     public void removeLife() {
         lives--;
@@ -67,15 +68,15 @@ public class Game implements Listener {
         }
     }
 
-    public int maxDelay = 80;
-    public int delay = 20;
+    private int maxDelay = 80;
+    private int delay = 20;
 
-    public void tick() {
-        if (clickingdelay++ > 5) clicking = false;
+    private void tick() {
+        if (clickingDelay++ > 5) clicking = false;
         if (delay-- < 0) {
             delay = new Random().nextInt(maxDelay);
             if (maxDelay > 20) maxDelay--;
-            fruitlist.add(new Fruit(this));
+            fruitList.add(new Fruit(this));
         }
         Location location = lookingLocation();
         if (rainbowTick++ == 255) {
@@ -84,21 +85,21 @@ public class Game implements Listener {
         if (clicking) {
             displayParticle(location, Color.getHSBColor(rainbowTick / 255F, 0.5F, 0.5F));
         }
-        for (int i = 0; i < fruitlist.size(); i++)
-            if (fruitlist.get(i).tick(location)) {
-                fruitlist.remove(i);
+        for (int i = 0; i < fruitList.size(); i++)
+            if (fruitList.get(i).tick(location)) {
+                fruitList.remove(i);
             }
     }
 
-    public Location lookingLocation() {
+    private Location lookingLocation() {
         double z = distance + gameLocation.getZ();
-        double playerdistance = player.getLocation().getZ() - z;
-        double y = playerdistance * Math.tan(Math.toRadians(player.getLocation().getPitch())) + 1.7 + player.getLocation().getY();
-        double x = playerdistance * Math.tan(Math.toRadians(player.getLocation().getYaw())) + player.getLocation().getX();
+        double playerDistance = player.getLocation().getZ() - z;
+        double y = playerDistance * Math.tan(Math.toRadians(player.getLocation().getPitch())) + 1.7 + player.getLocation().getY();
+        double x = playerDistance * Math.tan(Math.toRadians(player.getLocation().getYaw())) + player.getLocation().getX();
         return new Location(player.getWorld(), x, y, z);
     }
 
-    public void displayParticle(Location location, Color color) {
+    private void displayParticle(Location location, Color color) {
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(
                 new PacketPlayOutWorldParticles(EnumParticle.REDSTONE, false, (float) location.getX(),
                         (float) location.getY(), (float) location.getZ(), (float) (color.getRed() + 1) / 255 - 1,
@@ -110,7 +111,7 @@ public class Game implements Listener {
     public void onClick(PlayerInteractEvent event) {
         if (event.getPlayer() == player) {
             clicking = true;
-            clickingdelay = 0;
+            clickingDelay = 0;
             event.setCancelled(true);
         }
     }
@@ -119,7 +120,7 @@ public class Game implements Listener {
     public void onClickArEntity(PlayerInteractAtEntityEvent event) {
         if (event.getPlayer() == player) {
             clicking = true;
-            clickingdelay = 0;
+            clickingDelay = 0;
             event.setCancelled(true);
 
         }
@@ -129,14 +130,14 @@ public class Game implements Listener {
     public void onClickEntity(PlayerInteractEntityEvent event) {
         if (event.getPlayer() == player) {
             clicking = true;
-            clickingdelay = 0;
+            clickingDelay = 0;
             event.setCancelled(true);
 
         }
     }
 
 
-    void start() {
+    private void start() {
         tickTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(Fruitninja.i(), this::tick, 1, 1);
         player.teleport(gameLocation);
         player.setGameMode(GameMode.ADVENTURE);
@@ -144,17 +145,17 @@ public class Game implements Listener {
         register();
     }
 
-    public List<Fruit> fruitlist = new ArrayList<>();
+    private final List<Fruit> fruitList = new ArrayList<>();
 
-    public void register() {
+    private void register() {
         Bukkit.getPluginManager().registerEvents(this, Fruitninja.i());
     }
 
-    public void deRegister() {
+    private void deRegister() {
         HandlerList.unregisterAll(this);
     }
 
-    public void stop() {
+    private void stop() {
         deRegister();
         Bukkit.getScheduler().cancelTask(tickTask);
     }
